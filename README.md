@@ -1,4 +1,4 @@
-The software was developed by Mario Gomez and Facundo Memoli. We also use functions written by Misha Belkin (L2_distance.m), Vin de Silva (px_fps.m), and Uli Bauer (Ripser: https://github.com/Ripser/ripser).
+The software was developed by Mario Gomez and Facundo Memoli. We also use functions written by Misha Belkin (L2_distance.m), Vin de Silva (px_fps.m), and Uli Bauer (Ripser: https://github.com/Ripser/ripser). We have also benefited from Chris Tralie's Matlab wrapper for Ripser.
 
 ## Installation Instructions:
 1. From a terminal go to the Ripser folder and type 'make ripser-coeff'
