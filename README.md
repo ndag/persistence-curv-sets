@@ -3,5 +3,5 @@ The software was developed by Mario Gomez and Facundo Memoli. We also use functi
 ## Installation Instructions:
 1. From a terminal go to the Ripser folder and type 'make ripser-coeff'
 2. Check your Matlab distribution. You should install the Parallel Computing Toolbox https://www.mathworks.com/products/parallel-computing.html
-3. Edit the file Persistence_Parsave.m. Pay attention to the different flags and variables such as **n** and **d** and **ncores**. Note that **ncores** determines the number of workers that Matlab will recruit in order to run the *parfor*. This will depend on your system. 
+3. Edit the file Persistence_Parsave.m. Pay attention to the different flags and variables such as **n** and **d** and **ncores**. Note that **ncores** determines the number of workers that Matlab will recruit in order to run  *parfor*. This will depend on your system. 
 
