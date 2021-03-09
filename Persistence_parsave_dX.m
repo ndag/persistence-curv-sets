@@ -1,36 +1,36 @@
 clear; close all; clc;
-
-% Start a timer
-tic
-
 addpath(char("./functions"));
 
-% set the flag below:
-save_to_file = false;
+% Record the starting time
+tic
 
+% Bookkepping variables
+% nCores = 6;         % Number of parallel workers used
+% Comment out nCores to use Matlab's default choice
+
+save_to_file = true;
 results_file = 'Persistence_parsave';
+
 temp_file = 'parallel';
 
 % Parameters for the simulation
-dim = 1;        % Dimension of persistence VR diagramns 
-n = 2*dim+2;    % Number of points in each configuration
-
-nCores = 6;         % Number of parallel workers used
-
 nReps = 100;        % Number of snapshots
+dim = 1;            % Dimension of persistence VR diagramns 
+n = 2*dim+2;        % Number of points in each configuration
 
 
 % Here load your distance matrix dX representing the metric
 % space. Keep in mind that a reasonable size for dX is at most 5k x
 % 5k (depending on your system).
-filename_metric_space = './dX.mat';
+filename_metric_space = 'dX_example_circle.mat';
 load(filename_metric_space,'dX');
 
 % Initialize the parallel pool
-parpool('local',nCores);
-
-t1 = toc;   % End timer for setup
-tic         % Start a timer for the simulation
+if exist('nCores','var')
+    parpool('local',nCores);
+else
+    parpool('local');
+end
 
 % Create a parallel.pool.Constant from the 'Composite'
 % This allows the worker-local variable to be used inside PARFOR
@@ -47,14 +47,15 @@ spmd
 end
 myMatfileConstant = parallel.pool.Constant(myMatfile);
 
-% Define dX as a Constant object, so that all workers can access it
+% Change dX to a Constant object, so that all workers can access it
 dX = parallel.pool.Constant(dX);
+
+t1 = toc;   % Record the ending time of the setup
+tic         % Record when the simulation itself started
 
 % -------------------------------------------------------------------------
 % Repeat the experiment
 % -------------------------------------------------------------------------
-t1 = toc;
-tic
 parfor i=1:nReps
     % -------------------------------------------------------------------------
     % Sample n points from dX
@@ -96,9 +97,21 @@ parfor i=1:nReps
     end
 end % Of one of the nReps repetitions
 
+% Record the ending time of the simulation and display the duration of the
+% experiment
 t = toc;
 fprintf("Preparations: %03f\n",t1);
 fprintf("Calculations: %0.3f\n",t);
+
+% Graph results
+figure();
+hold on;
+
+tt = 0:0.01:max(bd_times);
+plot(tt, tt, 'red');                        % Draw the diagonal for reference
+
+plot(bd_times(:,1), bd_times(:,2), 'b.');   % Plot the persistence set
+hold off;
 
 % Save the results
 if save_to_file
