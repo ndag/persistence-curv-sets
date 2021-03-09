@@ -9,7 +9,7 @@ The software was developed by Mario Gomez and Facundo Memoli. We also use functi
 
 # Installation Instructions:
 1. From a terminal go to the ripser folder and run `make ripser-coeff`.
-- This code was developed in Matlab version R2019a. It requires the Parallel Computing Toolbox (https://www.mathworks.com/products/parallel-computing.html).
+2. This code was developed in Matlab version R2019a. It requires the Parallel Computing Toolbox (https://www.mathworks.com/products/parallel-computing.html).
 
 ## Example
 We have included a file dX_example_circle.mat with 1000 points sampled uniformly at random from the unit circle. Together with Ripser configured and the Parallel Computing Toolbox installed, the script should run out of the box. You can further personalize it as follows.
@@ -19,17 +19,17 @@ The input is the distance matrix $dX$ of a large metric space $X$ stored in a .m
 
 1. Store a distance matrix in a .mat file. In order to guarantee meaningful results, the matrix should be square, symmetric, have diagonal 0, and satisfy the triangle inequality(?).
 	- Keep in mind that a reasonable size for `dX` is at most 5000x5000, depending on your system.
-- Edit the file Persistence_parsave_dX.m to set the following *bookkeeping* variables:
+2. Edit the file Persistence_parsave_dX.m to set the following *bookkeeping* variables:
 	- `filename_metric_space`: Name (and path) of the .mat file containing the distance matrix.
 	- `results_file`: The name of the file where the results will be stored.
 	- `save_to_file`: Boolean flag to decide if you want to save the output to results_file.mat or if you only want to keep it in Matlab's workspace.
 	- `temp_file`: The ending of the file where the temporary results will be stored. The files are named checkpoints_temp_file_#.mat, where # runs from 1 to the number of cores utilized. This variable is usually not edited, unless you are running several copies of the script at the same time.
 	- `nCores`: The number of cores that you want to use. The maximum is the number of physical cores (not logical cores) available in your system. You can comment out that line to use the default chosen by Matlab.
 		- Matlab can only work with physical cores. See https://www.mathworks.com/matlabcentral/answers/80129-definitive-answer-for-hyperthreading-and-the-parallel-computing-toolbox-pct#answer_89845 for a more detailed explanation. In short, logical cores require hyperthreading, but this negatively impacts Matlab's performance more often than not.
-- Set the simulation parameters:
+3. Set the simulation parameters:
 	- `nReps`: Number of samples to take from $dX$.
 	- `dim`: The dimension of homology that you want to calculate. The program will automatically set `n=2*dim+2` to calculate the principal persistence set.
-- Once you've decided on the above paramters, run Persistence_parsave_dX.m from the Matlab command window. This will produce a .mat file containing the results.
+4. Once you've decided on the above paramters, run Persistence_parsave_dX.m from the Matlab command window. This will produce a .mat file containing the results.
 
 ## Output
 The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the paper and in the figure above. It also saves the following variables in results_file.mat:
