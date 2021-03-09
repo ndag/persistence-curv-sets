@@ -40,6 +40,7 @@ The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the pap
 
 # TO DO
 - Do we want to save the results to a .mat file directly from Persistence_parsave_dX.m, or should we gather the results distributed in the checkpoint_temp_file_#.mat files?
+	- In any case, it would be useful to upload the code that gathers the results from the checkpoints.
 - Write a Ripser version of Persistence_parfor.m. The use of parfor introduced bugs unseen in the sequential version, but this will allow us to compute more general persistence sets, where $n > 2k+2$.
 - Add support for a function that samples from a continuous metric space instead of a discrete one.
 - Set a random seed. This is not straightforward with parallel code because each worker has its own random seed.

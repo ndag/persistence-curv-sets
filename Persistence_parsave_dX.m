@@ -11,7 +11,7 @@ tic
 save_to_file = true;
 results_file = 'Persistence_parsave';
 
-temp_file = 'parallel';
+temp_file = 'parsave';
 
 % Parameters for the simulation
 nReps = 100;        % Number of snapshots
@@ -34,6 +34,10 @@ end
 
 % Create a parallel.pool.Constant from the 'Composite'
 % This allows the worker-local variable to be used inside PARFOR
+if ~exist('temp','dir')
+    mkdir('temp');      % Create the directory temp if it doesn't exist
+end
+
 spmd
     t = getCurrentTask();
     myFname = sprintf("%s/temp/checkpoint_%s_%02d", pwd, temp_file, t.ID); % each worker gets a unique filename
