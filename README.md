@@ -27,7 +27,7 @@ The input is the distance matrix $dX$ of a large metric space $X$ stored in a .m
 	- `nCores`: The number of cores that you want to use. The maximum is the number of physical cores (not logical cores) available in your system. You can comment out that line to use the default chosen by Matlab.
 		- Matlab can only work with physical cores. See https://www.mathworks.com/matlabcentral/answers/80129-definitive-answer-for-hyperthreading-and-the-parallel-computing-toolbox-pct#answer_89845 for a more detailed explanation. In short, logical cores require hyperthreading, but this negatively impacts Matlab's performance more often than not.
 3. Set the simulation parameters:
-	- `nReps`: Number of samples to take from $dX$.
+	- `nReps`: Number of samples to take from $dX$. **facundo says: Number of n-tuples sampled from X?**
 	- `dim`: The dimension of homology that you want to calculate. The program will automatically set `n=2*dim+2` to calculate the *principal* persistence set.
 4. Once you've decided on the above parameters, run Persistence_parsave_dX.m from the Matlab command window. This will produce a .mat file containing the results.
 
