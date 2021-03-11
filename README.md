@@ -1,5 +1,5 @@
 # Curvature sets over persistence diagrams
-Implementation of some of the ideas in our paper https://arxiv.org/pdf/2103.04470.pdf. 
+This repository contains the implementation of some of the ideas in our paper https://arxiv.org/pdf/2103.04470.pdf. 
 
 The implementation below is via Matlab's *parfor*.
 
@@ -19,7 +19,7 @@ The input is the distance matrix $dX$ of a large metric space $X$ stored in a .m
 
 1. Store a distance matrix in a .mat file. In order to guarantee meaningful results, the matrix should be square, symmetric, have diagonal 0, and satisfy the triangle inequality(?).
 	- Keep in mind that a reasonable size for `dX` is at most 5000x5000, depending on your system.
-2. Edit the file Persistence_parsave_dX.m to set the following *bookkeeping* variables:
+2. Edit the file Persistence_parsave_dX.m to set the following *book-keeping* variables:
 	- `filename_metric_space`: Name (and path) of the .mat file containing the distance matrix.
 	- `results_file`: The name of the file where the results will be stored.
 	- `save_to_file`: Boolean flag to decide if you want to save the output to results_file.mat or if you only want to keep it in Matlab's workspace.
@@ -28,8 +28,8 @@ The input is the distance matrix $dX$ of a large metric space $X$ stored in a .m
 		- Matlab can only work with physical cores. See https://www.mathworks.com/matlabcentral/answers/80129-definitive-answer-for-hyperthreading-and-the-parallel-computing-toolbox-pct#answer_89845 for a more detailed explanation. In short, logical cores require hyperthreading, but this negatively impacts Matlab's performance more often than not.
 3. Set the simulation parameters:
 	- `nReps`: Number of samples to take from $dX$.
-	- `dim`: The dimension of homology that you want to calculate. The program will automatically set `n=2*dim+2` to calculate the principal persistence set.
-4. Once you've decided on the above paramters, run Persistence_parsave_dX.m from the Matlab command window. This will produce a .mat file containing the results.
+	- `dim`: The dimension of homology that you want to calculate. The program will automatically set `n=2*dim+2` to calculate the *principal* persistence set.
+4. Once you've decided on the above parameters, run Persistence_parsave_dX.m from the Matlab command window. This will produce a .mat file containing the results.
 
 ## Output
 The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the paper and in the figure above. It also saves the following variables in results_file.mat:
