@@ -14,7 +14,7 @@ results_file = 'Persistence_parsave';
 temp_file = 'parsave';
 
 % Parameters for the simulation
-nReps = 100;        % Number of snapshots
+nReps = 1e4;        % Number of snapshots
 dim = 1;            % Dimension of persistence VR diagramns 
 n = 2*dim+2;        % Number of points in each configuration
 
@@ -25,10 +25,10 @@ n = 2*dim+2;        % Number of points in each configuration
 filename_metric_space = 'dX_example_circle.mat';
 load(filename_metric_space,'dX');
 
-% Initialize the parallel pool
-if exist('nCores','var')
+% Initialize the parallel pool if it doesn't exist yet
+if isempty(gcp('nocreate')) && exist('nCores','var')
     parpool('local',nCores);
-else
+elseif isempty(gcp('nocreate'))
     parpool('local');
 end
 
@@ -124,4 +124,4 @@ if save_to_file
 end
 
 % Delete the parallel pool
-delete(gcp('nocreate'))
+% delete(gcp('nocreate'))
