@@ -52,7 +52,7 @@ end
 myMatfileConstant = parallel.pool.Constant(myMatfile);
 
 % Change dX to a Constant object, so that all workers can access it
-dX = parallel.pool.Constant(dX);
+dX_constant = parallel.pool.Constant(dX);
 
 t1 = toc;   % Record the ending time of the setup
 tic         % Record when the simulation itself started
@@ -64,10 +64,10 @@ parfor i=1:nReps
     % -------------------------------------------------------------------------
     % Sample n points from dX
     % -------------------------------------------------------------------------
-    dX_0 = dX.Value;
+    dX_0 = dX_constant.Value;
     
-    I = randi(length(dX_0),n,1);         % get n indices
-                                       % sampled from 1:length(dX)
+    I = randperm(length(dX_0),n)';      % get n indices
+                                        % sampled from 1:length(dX)
     
     % Pick dm as a submatrix of dX that corresponds to the indices chosen
     % in I. This creates a metric space with the distance matrix dX
@@ -79,11 +79,21 @@ parfor i=1:nReps
 
     % Compute the Vietoris-Rips persistence diagrams of the metric space
     % with distance matrix dm
-    [tb,td] = persistence_matrix(dm);
-    bd_times(i,:) = [tb,td];
-
-    % Save the results of the iteration
     t = getCurrentTask();
+    PDs = RipsFiltrationDMPar(dm, dim, t.ID, temp_file);
+
+    % Get birth and death times
+    % We only expect one interval, so we just get the first
+    H_d = PDs{dim+1};
+    if numel(H_d) ~= 0
+        % Add them to the list
+        bd_times(i,:) = H_d(1,:);
+    else
+        % If there is no persistence, we record it
+        bd_times(i,:) = [0,0];
+    end
+    
+    % Save checkpoint
     matfileObj = myMatfileConstant.Value;
     
     matfileObj.confs(:,i) = I;

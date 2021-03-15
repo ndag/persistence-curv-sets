@@ -8,20 +8,18 @@ The software was developed by Mario Gomez and Facundo Memoli. We also use functi
 
 
 # Installation Instructions:
-<!--- 1. From a terminal go to the ripser folder and run `make ripser-coeff`.
-- Add support for a function that samples from a continuous metric space instead of a discrete one.
---->
-This code was developed in Matlab version R2019a. It requires the Parallel Computing Toolbox (https://www.mathworks.com/products/parallel-computing.html).
+1. This code was developed in Matlab version R2019a. It requires the Parallel Computing Toolbox (https://www.mathworks.com/products/parallel-computing.html).
+2. From a terminal go to the ripser folder and run `make ripser-coeff`.
 
 ## Example
-We have included a file dX_example_circle.mat with 1000 points sampled uniformly at random from the unit circle. As long as you have the Parallel Computing Toolbox installed, the script should run out of the box. You can further personalize it as described in the **Usage** section.
+We have included a file dX_example_circle.mat with 1000 points sampled uniformly at random from the unit circle. As long as you have both Ripser and the Parallel Computing Toolbox installed, both **Persistence_parallel_Ripser.m** and **Persistence_parallel_dX.m** should run out of the box. You can further personalize the scripts as described in the **Usage** section.
 
 ## Usage
 The input is the distance matrix $dX$ of a large metric space $X$ stored in a .mat file. The program will load this matrix and sample metric subspaces from it in order to compute $D_{n,k}^{\mathrm{VR}}(X)$. You need to set the following parameters:
 
-1. Store a distance matrix in a .mat file. In order to guarantee meaningful results, the matrix should be square, symmetric, have diagonal 0, and satisfy the triangle inequality.
+1. Store a distance matrix named `dX` in a .mat file. In order to guarantee meaningful results, the matrix should be square, symmetric, have diagonal 0, and satisfy the triangle inequality.
 	- Keep in mind that a reasonable size for `dX` is at most 5000x5000, depending on your system.
-2. Edit the file Persistence_parsave_dX.m to set the following *book-keeping* variables:
+2. Select the script that you want to use (**Persistence_parallel_Ripser.m** or **Persistence_parallel_dX.m**). Open the file to set the following *book-keeping* variables:
 	- `filename_metric_space`: Name (and path) of the .mat file containing the distance matrix.
 	- `results_file`: The name of the file where the results will be stored.
 	- `save_to_file`: Boolean flag to decide if you want to save the output to results_file.mat or if you only want to keep it in Matlab's workspace.
@@ -31,7 +29,7 @@ The input is the distance matrix $dX$ of a large metric space $X$ stored in a .m
 3. Set the simulation parameters:
 	- `dim`: The dimension of homology that you want to calculate. The program will automatically set `n=2*dim+2` to calculate the *principal* persistence set.
 	- `nReps`: Number of $n$-point samples to take from $dX$.
-4. Once you've decided on the above parameters, run Persistence_parsave_dX.m from the Matlab command window. This will produce a .mat file containing the results.
+4. Once you've decided on the above parameters, run your selected script from the Matlab command window. This will produce a .mat file containing the results.
 
 ## Output
 The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the paper and in the figure above. It also saves the following variables in results_file.mat:
@@ -41,7 +39,11 @@ The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the pap
 * `bd_times`: An array of size `[nReps, 2]` with the persistence diagrams of the samples. The first column `bd_times(:,1)` contains the birth times and the second, `bd_times(:,2)`, the death times. A row `bd_times(i,:)` will be non-zero if, and only if, the configuration with distance matrix `dms(:,:,i)` produced persistence homology.
 
 # TO DO
-- Do we want to save the results to a .mat file directly from Persistence_parsave_dX.m, or should we gather the results distributed in the checkpoint_temp_file_#.mat files?
+- Do we want to save the results to a .mat file directly from **Persistence_parallel_*.m**, or should we gather the results distributed in the checkpoint_temp_file_*.mat files?
 	- In any case, it would be useful to upload the code that gathers the results from the checkpoints.
-- Write a Ripser version of Persistence_parfor.m. The use of parfor introduced bugs unseen in the sequential version, but this will allow us to compute more general persistence sets, where $n > 2k+2$.
+- Write a version of Persistence_parallel_Ripser.m that allows for $n > 2k+2$.
 - Set a random seed. This is not straightforward with parallel code because each worker has its own random seed.
+
+<!--
+- Add support for a function that samples from a continuous metric space instead of a discrete one.
+-->
