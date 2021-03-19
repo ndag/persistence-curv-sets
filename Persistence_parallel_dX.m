@@ -8,7 +8,7 @@ tic
 % nCores = 6;         % Number of parallel workers used
 % Comment out nCores to use Matlab's default choice
 
-save_to_file = true;
+save_to_file = false;
 results_file = 'Persistence_parsave';
 
 temp_file = 'parsave';
@@ -66,8 +66,8 @@ parfor i=1:nReps
     % -------------------------------------------------------------------------
     dX_0 = dX_constant.Value;
     
-    I = randperm(length(dX_0),n)';      % get n indices
-                                        % sampled from 1:length(dX)
+    I = randi(length(dX_0),1,n);      % get n indices
+                                      % sampled from 1:length(dX)
     
     % Pick dm as a submatrix of dX that corresponds to the indices chosen
     % in I. This creates a metric space with the distance matrix dX

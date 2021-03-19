@@ -1,9 +1,14 @@
 %Programmer: Chris Tralie
 %Purpose: A wrapper around Uli Bauer's ripser
+% Modified by Mario Gomez
+% Modifications:
+%           - Changed the code to extract the upper diagonal of the matrix.
+%           - We now write the matrix to a binary file instead of a txt.
 %Parameters: D (N x N distance matrix)
 %           maxHomDim: The maximum homological dimension (default 1)
 %           thresh: The maximum length at which to add an edge
 %           coeff: The field coefficients to use (default 2)
+
 function [PDs] = RipsFiltrationDM(D, maxHomDim, thresh, coeff)
     if nargin < 3
         thresh = max(D(:))*2;
@@ -11,31 +16,18 @@ function [PDs] = RipsFiltrationDM(D, maxHomDim, thresh, coeff)
     if nargin < 4
         coeff = 2;
     end
-    %Step 1: Extract and output lower triangular distance matrix
-    DLT = D(triu(~~D));
-    %writematrix(DLT, 'DLower.txt');        % This didn't work
-    %[~, cmdout] = system(sprintf('ripser/ripser-coeff --dim %i --threshold %g --modulus %i DLower.txt', maxHomDim, thresh, coeff));
     
-    % Try 2: writematrix
-%     writematrix(D, 'DMatrix.txt')
-    % This is slow
+    % Step 1: Extract and output lower triangular distance matrix
+    n = length(D);
+    DLT = D(boolean(triu(ones(n)-eye(n))));
     
-    % workaroud to avoid writematrix
-    % from: https://www.mathworks.com/matlabcentral/answers/419329-speeding-up-writing-a-very-large-text-file
-%     file_name = sprintf('temp/DMatrix.txt');
-%     N = size(D,2);
-%     F = repmat(',%.15f',1,N);
-%     F = [F(2:end),'\n'];
-%     fid = fopen(file_name,'wt');
-%     fprintf(fid,F,D');
-%     fclose(fid);
-    
-    % Even faster: use binary files
+    % Step 2: Write the matrix to a binary file so that Ripser can read it
     file_name = sprintf('temp/DLower.bin');
     fileID = fopen(file_name,'w');
     fwrite(fileID, DLT, 'float', 'l');
     fclose(fileID);
 
+    % Call Ripser throught the terminal
     [~, cmdout] = system(sprintf('ripser/ripser-coeff --dim %i --threshold %g --modulus %i --format binary %s', maxHomDim, thresh, coeff, file_name));
     
     lines = strsplit(cmdout, '\n');
