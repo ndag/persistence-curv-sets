@@ -24,7 +24,7 @@ The input is the distance matrix $dX$ of a large metric space $X$ stored in a .m
 	- `results_file`: The name of the file where the results will be stored.
 	- `save_to_file`: Boolean flag to decide if you want to save the output to results_file.mat or if you only want to keep it in Matlab's workspace.
 	- `temp_file`: The ending of the file where the temporary results will be stored. The files are named checkpoints_temp_file_#.mat, where # runs from 1 to the number of cores utilized. This variable is usually not edited, unless you are running several copies of the script at the same time.
-	- `nCores`: The number of cores that you want to use. The maximum is the number of physical cores (not logical cores) available in your system. You can comment out that line to use the default chosen by Matlab.
+	- `CoresRequested`: The number of cores that you want to use. The maximum is the number of physical cores (not logical cores) available in your system. You can set `CoresRequested = 0` to use the default chosen by Matlab.
 		- Matlab can only work with physical cores. See https://www.mathworks.com/matlabcentral/answers/80129-definitive-answer-for-hyperthreading-and-the-parallel-computing-toolbox-pct#answer_89845 for a more detailed explanation. In short, logical cores require hyperthreading, but this negatively impacts Matlab's performance more often than not.
 3. Set the simulation parameters:
 	- `dim`: The dimension of homology that you want to calculate. The program will automatically set `n=2*dim+2` to calculate the *principal* persistence set.
@@ -40,6 +40,7 @@ The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the pap
 
 # TO DO
 - Do we want to save the results to a .mat file directly from **Persistence_parallel_*.m**, or should we gather the results distributed in the checkpoint_temp_file_*.mat files?
+	- For now, we're saving the results directly to a .mat file. The checkpoints are there for redundancy in case the main program crashes.
 	- In any case, it would be useful to upload the code that gathers the results from the checkpoints.
 - Write a version of Persistence_parallel_Ripser.m that allows for $n > 2k+2$.
 - Set a random seed. This is not straightforward with parallel code because each worker has its own random seed.

@@ -3,21 +3,23 @@ addpath(char("./functions"));
 
 % Record the starting time
 tic
-
+% -------------------------------------------------------------------------
 % Bookkepping variables
-% nCores = 6;         % Number of parallel workers used
-% Comment out nCores to use Matlab's default choice
+% -------------------------------------------------------------------------
+CoresRequested = 0;         % Number of parallel workers used
+% Set CoresRequested = 0 to use Matlab's default choice
 
 save_to_file = true;
 results_file = 'Persistence_parsave';
 
 temp_file = 'parsave';
 
+% -------------------------------------------------------------------------
 % Parameters for the simulation
+% -------------------------------------------------------------------------
 nReps = 1e4;        % Number of snapshots
 dim = 1;            % Dimension of persistence VR diagramns 
 n = 2*dim+2;        % Number of points in each configuration
-
 
 % Here load your distance matrix dX representing the metric
 % space. Keep in mind that a reasonable size for dX is at most 5k x
@@ -25,19 +27,33 @@ n = 2*dim+2;        % Number of points in each configuration
 filename_metric_space = 'dX_example_circle.mat';
 load(filename_metric_space,'dX');
 
+% -------------------------------------------------------------------------
+% Set up the parallel pools and variables
+% -------------------------------------------------------------------------
 % Initialize the parallel pool if it doesn't exist yet
-if isempty(gcp('nocreate')) && exist('nCores','var')
-    parpool('local',nCores);
-elseif isempty(gcp('nocreate'))
-    parpool('local');
+if isempty(gcp('nocreate'))
+    if CoresRequested ~= 0
+        parpool('local',CoresRequested);
+    else
+        parpool('local');
+    end
 end
+p = gcp('nocreate');
+nCores = p.NumWorkers;
 
-% Create a parallel.pool.Constant from the 'Composite'
-% This allows the worker-local variable to be used inside PARFOR
+% Create the directory temp if it doesn't exist
 if ~exist('temp','dir')
-    mkdir('temp');      % Create the directory temp if it doesn't exist
+    mkdir('temp');
 end
 
+% Global result variables
+confs = zeros(n,nReps);
+dms = zeros(n,n,nReps);
+bd_times = zeros(nReps,2);
+
+% Create a parallel.pool.Constant variable. The workers will use them to
+% save results while the program runs. In case the program crashes, these
+% files can be used to read intermediate results
 spmd
     t = getCurrentTask();
     myFname = sprintf("%s/temp/checkpoint_%s_%02d", pwd, temp_file, t.ID); % each worker gets a unique filename
@@ -54,18 +70,15 @@ myMatfileConstant = parallel.pool.Constant(myMatfile);
 % Change dX to a Constant object, so that all workers can access it
 dX_constant = parallel.pool.Constant(dX);
 
-t1 = toc;   % Record the ending time of the setup
+t_setup = toc;   % Record the ending time of the setup
 tic         % Record when the simulation itself started
 
 % -------------------------------------------------------------------------
-% Repeat the experiment
+% Execute the experiment
 % -------------------------------------------------------------------------
 parfor i=1:nReps
-    % -------------------------------------------------------------------------
     % Sample n points from dX
-    % -------------------------------------------------------------------------
     dX_0 = dX_constant.Value;
-    
     I = randi(length(dX_0),1,n);      % get n indices
                                       % sampled from 1:length(dX)
     
@@ -87,18 +100,24 @@ parfor i=1:nReps
     H_d = PDs{dim+1};
     if numel(H_d) ~= 0
         % Add them to the list
-        bd_times(i,:) = H_d(1,:);
+        tb = H_d(1,1);
+        td = H_d(1,2);
     else
         % If there is no persistence, we record it
-        bd_times(i,:) = [0,0];
+        tb = 0;
+        td = 0;
     end
+
+    % Save results
+    confs(:,i) = I';
+    dms(:,:,i) = dm;
+    bd_times(i,:) = [tb,td];
     
-    % Save checkpoint
+    % And save them to disk (for redundancy)
     matfileObj = myMatfileConstant.Value;
-    
-    matfileObj.confs(:,i) = I;
+    matfileObj.confs(:,i) = I';
     matfileObj.dms(:,:,i) = dm;
-    matfileObj.bd_times(i,:) = bd_times(i,:);
+    matfileObj.bd_times(i,:) = [tb,td];
     matfileObj.gotResult(1,i) = true;
 
     % Show progress
@@ -113,11 +132,13 @@ end % Of one of the nReps repetitions
 
 % Record the ending time of the simulation and display the duration of the
 % experiment
-t = toc;
-fprintf("Preparations: %03f\n",t1);
-fprintf("Calculations: %0.3f\n",t);
+t_calculations = toc;
+fprintf("Preparations: %03f\n",t_setup);
+fprintf("Calculations: %0.3f\n",t_calculations);
 
+% -------------------------------------------------------------------------
 % Graph results
+% -------------------------------------------------------------------------
 figure();
 hold on;
 
@@ -127,10 +148,12 @@ plot(tt, tt, 'red');                        % Draw the diagonal for reference
 plot(bd_times(:,1), bd_times(:,2), 'b.');   % Plot the persistence set
 hold off;
 
-% Save the results
+% -------------------------------------------------------------------------
+% Save results
+% -------------------------------------------------------------------------
 if save_to_file
-    exclude = "myFname|myMatfile|myMatfileConstant|exclude";
-    save(results_file, '-regexp', sprintf('^(?!(%s)$).', exclude));
+    exclude = "t|p|myFname|myMatfile|myMatfileConstant|dX_constant|exclude";
+    save(results_file, '-regexp', sprintf('^(?!(%s)$).', exclude)); %#ok<UNRCH>
 end
 
 % Delete the parallel pool
