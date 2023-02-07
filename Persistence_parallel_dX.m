@@ -1,5 +1,5 @@
 clear; close all; clc;
-addpath(char("./functions"));
+addpath('functions/persistence');
 
 % Record the starting time
 tic
