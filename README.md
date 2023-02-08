@@ -45,11 +45,16 @@ We include a folder with further experiments.
 
 ## Ellipses
 The script **Persistence_Single_Ellipse.m** computes the principal persistence set of an ellipse in $\mathbb{R}^2$ with semiaxes $a$ and $b$. You can modify the variables `k`, `nReps`, `save_to_file`, and `results_file` as above. This code is not parallelized. Additionally, you can modify the length of the semiaxes `a` and `b`. The variable `confs` now has size `[n, 2, nReps]`, and each page `confs(:,:,i)` is an $n$-point subset of $\mathbb{R}^2$. Points are stored as row vectors. We include example calculations for some combinations of `a` and `b`.
+![Alt text](Other_Examples/Ellipses/results/D41(Ellipse) a=1.2, b=1.0.png?raw=true "D41_Ellipse")
+An image similar to the above can be produced by running **Persistence_Single_Ellipse.m** with `a=1.2`, `b=1`, `k=1`, and `nReps=10^6`.
 
 ## Graphs
 These scripts compute principal persistence sets of metric graphs. For the script **Persistence_Metric_Graph.m**, the input is a weighted adjacency matrix stored in the variable `A`. We include several examples (commented in the file). **Persistence_Metric_Graph_Collection.m** can operate several graphs at once. The input is a set of weighted adjacency matrices, each separated by an empty line, stored in a text file in the `Other_Examples/Graphs/data/` folder. The folder includes several examples.
 
 Similar to the main script, the variables that can be modified in these scripts are `k`, `nReps`, `save_to_file`, and `results_file`. If you set `save_to_file=true` in **Persistence_Metric_Graph_Collection.m**, the script will save the graphs of the persistence sets to the 'Results/' folder instead of showing them on screen.
+
+![Alt text](Other_Examples/Graphs/results/Wedge_Circles.png?raw=true"Wedge_of_cycles")
+The image above was obtained by running **Persistence_Metric_Graph.m** with `k=1` and `nReps=10^5`. Among the adjacency matrices in the file, we uncommented the one titled "Wedge of two circles of different lengths".
 
 ## Random_Walk_Sd
 We have observed that sampling 6-point configurations from $\mathbb{S}^2$ doesn't yield a good enough sampling of $D_{6,2}(\mathbb{S}^2)$ to determine its boundary. For this reason, we implemented a Markov Chain Monte Carlo random walk biased towards rare configurations. The script **Persistence_complete_w_rw.m** executes this idea. Choose `k` and set `n=2k+2`. To approximate $D_{2k+2,k}^{\mathrm{VR}}(\mathbb{S}^d)$, the script first samples `nReps` configurations of `n` points from $\mathbb{S}^d$ and computes the set $D_\text{unif}$ of their persistence diagrams. It then executes a random walk with `nSteps` steps as follows. It starts with a configuration $X_0$ that has a non-trivial persistence diagram, and defines $D_0 := D_\text{unif}$. At each step $t$, we obtain $X_{t-1}^{\sigma^2}$ by perturbing the previous configuration $X_{t-1}$ with Gaussian noise of variance $\sigma^2$. Let $dgm_{t-1}$ and $dgm_{t-1}^{\sigma^2}$ be the persistence diagrams of $X_{t-1}$ and $X_{t-1}^{\sigma^2}$, respectively. We then compute the cardinalities $N_{\text{pre}} = |B_\epsilon(dgm_{t-1}) \cap D_{t-1}|$ and $N_{\text{post}} = |B_\epsilon(dgm_{t-1}^{\sigma^2}) \cap D_{t-1}|$ (the balls are induced by the bottleneck distance). We accept the new configuration $X_{t-1}^{\sigma^2}$ with probability $\min(1,N_\text{pre}/N_\text{post})$, and set $X_t := X_{t-1}^{\sigma^2}$ and $D_t := D_{t-1} \cup \{dgm_{t-1}^{\sigma^2}\}$. If $X_{t-1}^{\sigma^2}$ is rejected, we generate a new $X_{t-1}^{\sigma^2}$ by perturbing $X_{t-1}$ until the new configuration is accepted. This causes the random walk to diverge from the diagrams that already are in $D_\text{unif}$ and produces configurations closer to the boundary of $D_{2k+2,k}^\mathrm{VR}(\mathbb{S}^{d})$.
@@ -65,6 +70,9 @@ The variables that can be modified in this script are:
 
 ### Output
 The scripts produces two sets of variables: `confs_0`, `dms_0`, `bd_times_0`, and `confs_n`, `dms_n`, `bd_times_n`. The the initial uniform sample and the random walk are stored in the variables with subindex `0` and `n`, respectively. The description of `dms_*` and `bd_times_*` is the same as in the main script. The difference is `confs_*`. In this script, each page `confs_*(:,:,i)` is an $n$-by-$(d+1)$ matrix representing an $n$-point sample from $\mathbb{S}^d$.
+
+![Alt text](Other_Examples/Random_Walk_Sd/results/D62_S2_Conjecture.png?raw=true"D62_S2_Conjecture")
+An image similar to the above can be produced by running **Persistence_complete_w_rw.m** and **Plot_S2_conjecture.m** in succession with the current parameters.
 
 ### Extra files
 The script **Persistence_random_walk_plot_progress.m** loads a file with a uniform sample of $D_{6,2}^\text{VR}(\mathbb{S}^2)$ and executes the random walk described above. The difference is that it plots $D_{6,2}^\text{VR}(\mathbb{S}^2)$ and highlights the diagrams produced by the random walk as it finds them.

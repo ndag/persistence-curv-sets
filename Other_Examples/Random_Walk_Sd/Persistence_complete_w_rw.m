@@ -19,7 +19,7 @@ eps = 0.005;        % Radius of density neighborhood
 rng(1);             % set random seed
 
 % Number of configurations to sample
-nReps = 5e3;
+nReps = 10^6;
 nSteps = 5e3;
 
 % -------------------------------------------------------------------------

@@ -12,7 +12,7 @@ k = 1;      % Dimension of homology to compute
 n = 2*k+2;  % Number of points in each configuration
 
 % Number of n points samples to take
-nReps = 1e6;
+nReps = 1e5;
 
 % List to save the resultsnReps
 confs = zeros(n,3,nReps);
@@ -78,14 +78,14 @@ bd_times = zeros(nReps,2);
 %      0, 0, 1, 0, 0, 1, 0, 1;
 %      0, 0, 0, 1, 1, 0, 1, 0];
 
-% % Wedge of two cycles of different lengths
-% A = [0, 1.1, 1.1,   0, 0, 0;
-%      1.1, 0, 1.1,   0, 0, 0;
-%      1.1, 1.1, 0,   1, 0, 1;
-%      
-%      0, 0, 1,       0, 1, 0;
-%      0, 0, 0,       1, 0, 1;
-%      0, 0, 1,       0, 1, 0];
+% Wedge of two cycles of different lengths
+A = [0, 1.1, 1.1,   0, 0, 0;
+     1.1, 0, 1.1,   0, 0, 0;
+     1.1, 1.1, 0,   1, 0, 1;
+     
+     0, 0, 1,       0, 1, 0;
+     0, 0, 0,       1, 0, 1;
+     0, 0, 1,       0, 1, 0];
 
 % % Wedge of two cycles of equal length
 % A = [0,1,1,0,0;
