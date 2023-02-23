@@ -49,6 +49,8 @@ function [PDs] = RipsFiltrationDMPar(D, maxHomDim, t, name, thresh, coeff)
             continue
         elseif strcmp(lines{ii}(1:4), 'pers')
             PDs{end+1} = {};
+        elseif strcmp(lines{ii}(1:4), 'spar')
+            continue
         else
             s = strrep(lines{ii}, ' ', '');
             s = strrep(s, '[', '');
