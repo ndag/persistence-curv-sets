@@ -43,7 +43,7 @@ The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the pap
 # Shape_Analysis
 We refer the user to Section 4.3.1 of our paper for the description of the experiment. We used the database from the paper ''Deformation Transfer for Triangle Meshes'' by Robert W. Sumner and Jovan Popović. As of the time of writing, both the database and the paper can be found here: https://people.csail.mit.edu/sumner/research/deftransfer/.
 
-![Alt text](Shape_Analysis/models/collage.png?raw=true "Collage_Sumner"|width=100)
+![Alt text](Shape_Analysis/models/collage.png width=100)
 
 To use this code, download the database from the link above. Place the folders with the meshes in the **models** directory. To reproduce the experiments in our paper, you should have the following subfolders: `camel-poses`, `cat-poses`, `elephant-poses`, `face-poses`, `head-poses`, and `horse_poses`. Then, run the scripts in the **Shape_Analysis** folder in order (run S1_Setup, then S2_persistence_Sets.m, and so on). The order is set up so that, if you change parameters in one script, you don't have to re-run every script before it. These parameters are:
 
