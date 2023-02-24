@@ -21,12 +21,6 @@ if ~exist(param_folder, 'dir')
     mkdir(param_folder)
 end
 
-% List of names of shapes
-names = dir('models/*.mat');
-names = {names.name};
-names = cellfun(@(s) strsplit(s, '.'), names, 'UniformOutput', false);
-names = cellfun(@(s) s{1}, names, 'UniformOutput', false);
-
 % Compute histogram centers
 nBins0 = 850;       % Number of histogram centers in dimension 0
 nBins1 = 946;       % Approximate number of centers in dimensions > 0
@@ -37,8 +31,7 @@ disp('Histogram centers Done')
 disp(' ------------------------------ ')
 
 % Compute distance matrices
-% NFPS = 4000;        % Number of points to subsample with FPS
-NFPS = 1000;        % Number of points to subsample with FPS
+NFPS = 4000;        % Number of points to subsample with FPS
 
 rng(1);
 P1_Compute_dm_Sumner

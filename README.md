@@ -3,7 +3,7 @@ This repository contains the implementation of some of the ideas in our paper ht
 
 The implementation below is via Matlab's *parfor*.
 
-The software was developed by Mario Gomez and Facundo Memoli. We also use functions written by Misha Belkin (L2_distance.m), Vin de Silva (px_fps.m), and Uli Bauer (Ripser: https://github.com/Ripser/ripser). We have also benefited from Chris Tralie's Matlab wrapper for Ripser (https://github.com/ctralie/Math412S2017).
+The software was developed by Mario Gomez and Facundo Memoli. We also use functions written by Misha Belkin (L2_distance.m), Vin de Silva (px_fps.m), Uli Bauer (Ripser: https://github.com/Ripser/ripser), Masoud Alipur (emd_mex.m), and Michael Kerber, Dmitriy Morozov & Arnur Nigmetov (bottleneck distance with Hera). We have also benefited from Chris Tralie's Matlab wrapper for Ripser (https://github.com/ctralie/Math412S2017).
 ![Alt text](stack-D-to1.png?raw=true "Stacking of persistence diagrams")
 
 # Installation Instructions:
@@ -39,6 +39,29 @@ The script produces a graph of $D_{n,k}^\mathrm{VR}(X)$, as described in the pap
 * `confs`: Matrix of size `[n, nReps]`. Each column `I = confs(:,i)` is the set of indices a set of $n$ points sampled from $X$.
 * `dms`: Array of size `[n, n, nReps]`. Each page `dm = dms(:,:,i)` is the distance matrix of a sample of $n$ points from $X$. It is obtained from `dX` and `confs` by setting `I=confs(:,i)` and `dm=dX(I,I)`.
 * `bd_times`: An array of size `[nReps, 2]` with the persistence diagrams of the samples. The first column `bd_times(:,1)` contains the birth times and the second, `bd_times(:,2)`, the death times. A row `bd_times(i,:)` will be non-zero if, and only if, the configuration with distance matrix `dms(:,:,i)` produced persistence homology.
+
+# Shape_Analysis
+We refer the user to Section 4.3.1 of our paper for the description of the experiment. We used the database from the paper ''Deformation Transfer for Triangle Meshes'' by Robert W. Sumner and Jovan Popović. As of the time of writing, both the database and the paper can be found here: https://people.csail.mit.edu/sumner/research/deftransfer/.
+
+![Alt text](Shape_Analysis/models/collage.png?raw=true "Collage_Sumner")
+
+To use this code, download the database from the link above. Place the folders with the meshes in the **models** directory. To reproduce the experiments in our paper, you should have the following subfolders: `camel-poses`, `cat-poses`, `elephant-poses`, `face-poses`, `head-poses`, and `horse_poses`. Then, run the scripts in the **Shape_Analysis** folder in order (run S1_Setup, then S2_persistence_Sets.m, and so on). The order is set up so that, if you change parameters in one script, you don't have to re-run every script before it. These parameters are:
+
+* **S1_setup.m**:
+	* `nBins0` and `nBins1` are the number of points used to approximate $U_{2k+2,k}^\mathrm{VR}(G_i)$ for $k=0$ and $k>0$, respectively. Be aware that the number of points is only guaranteed to be close to `nBins0` and `nBins1`. Choose these numbers so that `emd_mex` can compute the Wasserstein distance between vectors with that size.
+	* `NFPS`: Number of points in the graphs $G_i$. Choose `NFPS` so that MATLAB can store a matrix of size `[NFPS,NFPS]`.
+* **S2_Persistence_Sets.m**:
+	* `Ks`: Vector with the dimensions `k` to compute the persistence sets $D_{2k+2,k}$.
+	* `nRepsK`: Vector of the same size as `Ks`. The entry `nRepsK(idx)` is the number of samples to take to compute $D_{2k+2,k}$ for `k=Ks(idx)`. Note: This value is unused when `k=0`, but `nRepsK` needs a placeholder value.
+* **S3_Persistence_Diagrams.m**:
+	* `maxHomDim`: We compute the persistence diagrams from dimension 0 up to `maxHomDim`.
+	* `nL`: We usually can't compute the persistence diagram of the whole set $G_i$. Instead, we operate on a subset of size `nL`.
+	* `s_edges`: We compute persistence diagrams up to a threshold `t` chosen so that the 1-skeleton of the Vietoris-Rips complex contains a certain percentage of the total number of edges. That percentage is `0 < s_edges < 1`.
+* **S4_NN_Classification.m**:
+	* `nTests`: The number of times that the 1-nearest neighbor experiment will be repeated.
+* **S5_NN_Classification_dWmax.m**:
+	* `nTests`: Same as in **S4_NN_Classification.m**.
+	* Line 88: You can modify the initial guess `w0` here.
 
 # Other_Examples
 We include a folder with further experiments.

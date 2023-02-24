@@ -10,10 +10,11 @@ addpath('../functions/emd')
 addpath('Persistence_Sets')
 
 % Parameters
-Ks = [0, 1,2];              % Dimensions to calculate principal persistence sets
-nRepsK = [0, 10^4, 10^4];   % Number of samples to take in each persistence set
-% Note: Leave a placeholder for dimension 0 in nRepsK. We don't need to cap
-% nReps in dimension 0, but we still need a value there
+Ks = [0,1,2];               % Dimensions to calculate principal persistence sets
+nRepsK = [0, 10^6, 10^7];   % Number of samples to take in each persistence set
+% Note: Ks and nRepsK should have the same size. In particular if Ks
+% contains 0, the corresponding value in nRepsK will not  be used, but we
+% still need something there
 
 % Create folders to save results
 input_folder = 'models/processed';
