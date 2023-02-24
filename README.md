@@ -63,6 +63,8 @@ To use this code, download the database from the link above. Place the folders w
 	* `nTests`: Same as in **S4_NN_Classification.m**.
 	* Line 88: You can modify the initial guess `w0` here.
 
+![Alt text](Shape_Analysis/models/dW_2_0.png?raw=true "d_Wasserstein between measures U_{2,0}")
+
 # Other_Examples
 We include a folder with further experiments.
 
